@@ -1,0 +1,96 @@
+NAME
+    ImplicitThis - Syntactical Sugar for OO Methods
+
+SYNOPSIS
+      use ImplicitThis; ImplicitThis::imply();
+
+      sub new {
+        my $type = shift;
+        my %args = @_;
+        # must be blessed hash object
+        bless { 
+          foo => $args{'foo'},
+          bar => $args{'bar'},
+        }, $type;
+      }
+
+      sub my_accessor {
+        # $this is read for us. $bar is aliased to $this->{'bar'}, similiar for $foo
+        $this->another_accessor($bar);
+        $foo++;
+      }
+
+      sub _another_accessor {
+        # this will die if called from something not derived from our package
+        $foo++;
+      }
+
+ABSTRACT
+      Methods in OO Perl receive "$this" without having to read it.
+      Instance field variables are accessable by name instead of having to
+      dereference the hash ref. Privicy is enforced for methods starting with
+      an understore.
+
+DESCRIPTION
+      This emulates other OO languages, such as Java and C++, where the compiler
+      implicitly and invisibly passes "this" as the first argument of each method
+      call. While Perl passes this argument invisibly, you must manually write
+      code to read it. Java and C++ also discover, at compile time, rather a
+      variable is an instance variable or a static variable, without you needing
+      to distinguish them using special syntax. We remove the extra syntax, but
+      this is learned at run time, not compile time. Unlike Alias.pm, this code
+      is likely to have a noticable impact on performance of code that uses OO
+      accessors heavily.
+
+      ImplicitThis::imply() places a thin wrapper is placed around methods in your 
+      object. *this{SCALAR}
+      is a reference to a lexical we've shifted off the argument list.
+      Aliases are created for each key in %$this to itself value in the
+      same way.
+
+      While this module works fine for me, your milage may very: it has not
+      been extensively tested.
+
+      Similar to Alias.pm. However, we're pure Perl, and _no_ additional
+      syntax is introduced. 
+  
+      Blah blah blah.
+
+  EXPORT
+    None.
+
+BUGS
+    Does anyone know how to hand the CPU back after we finish loading, but
+    take it again when whomever used us finishes loading?
+
+    Doesn't work with strict on without doing "use vars" on each field
+    member. Bummer.
+
+    Not sure which version of perl is the minimum required.
+
+    May confuse highly introspective perl, like anything Damian Conway might
+    write.
+
+    Does not work correctly when instance variables are tied: the alias
+    doesn't currently take on the tiedness. In some cases, tie $alias, ref
+    $this->{$alias} would do the trick. This would fail on limited resources
+    and when tie requires arguments.
+
+SEE ALSO
+    Just a cheep knock-off of Alias.pm by Gurusamy Sarathy.
+
+    For more examples and documentation, as well as forums, Perl Design
+    Patterns, see: http://www.slowass.net/wiki/
+
+AUTHOR
+    Scott Walters "Root of all Evil" <scott@slowass.net> SWALTERS on CPAN
+
+COPYRIGHT AND LICENSE
+    Copyright 2002 by Scott Walters
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself. Should you, through neglect or
+    fault, speak the same phrase concurrently with another party, you
+    realize that use of this software requires compliances with the rules
+    governing the game of "jinx".
+

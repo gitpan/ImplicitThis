@@ -1,0 +1,6 @@
+Revision history for Perl extension ImplicitThis.
+
+0.1_001  Sat Jul 13 16:23:24 2002
+	- original version; created by h2xs 1.22 with options
+		-X -A -v 0.1_001 -n ImplicitThis
+
